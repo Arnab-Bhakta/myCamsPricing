@@ -1,3 +1,8 @@
 credentials.json
 secrets.json
 token.pickle
+__pycache__/*
+gauto/*
+gauto2/*
+scheduler.bat
+
