@@ -1,11 +1,12 @@
 import scrapper
-import gmailclient
-import json
-import datetime
+import html_renderer
 
-with open('secrets.json') as json_data:
-    secrets = json.load(json_data)
-scrapper.scrapper(float(secrets['units']))
-print( str( datetime.datetime.now() ) + " : " )
-gmailclient.gmail_client(secrets['sender'], secrets['receiver'])
+import os
 
+
+if __name__ == "__main__":
+    print(os.getcwd())
+    scrapper.starter()
+    html_renderer.renderer()
+    import server
+    server.create()
