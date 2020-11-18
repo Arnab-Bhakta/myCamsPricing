@@ -1,7 +1,7 @@
 import pickle
 import os
 
-price = 774.70
+price = 829.629
 
 
 def renderer():
