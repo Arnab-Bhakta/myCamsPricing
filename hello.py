@@ -52,6 +52,9 @@ def change_nav():
     if request.method == 'GET':
         return redirect('/')
 
+
+
 if __name__ == '__main__':
     # Threaded option to enable multiple instances for multiple user access support
-    app.run(threaded=True, port=5000)
+    port = int(os.environ.get('PORT', 17995))
+    app.run(threaded=True, port=port)
