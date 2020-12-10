@@ -1,120 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=2.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>myCams NAV</title>
-     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
+
+    <!-- bootstrap css -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <!-- JavaScript Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- for chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    
+    <script src="https://unpkg.com/feather-icons"></script>
+  </head>
+
+  <body>
+    <div class="d-flex flex-column align-items-center">
+
+      <h1 class="mt-4">myCams Nav Values</h1>
+      <h3 class="mt-2">Current units : {{units}}</h3>
+
+      <div class="row mt-2">
+        <table class="table table-striped table-hover">
+          <thead style="background-color: rgb(0, 255, 255);">
+          <tr>
+            <td>Date</td>
+            <td>Price</td>
+            <td>Price Change</td>
+          </tr>
+          </thead>
+          {% for nav in navs %}
+          <tr>
+            <td>{{nav.date}}</td>
+            <td>{{ (nav["nav"]*units)|round(2, 'floor') }}</td>
+            <td>
+              <span>{{ (nav["change"]*units)|round(2, 'floor') }}
+              {%  if nav['change']>=0 %} <i data-feather="arrow-up" class="ms-1" style="color: green;"></i> {%endif%}
+              {%  if nav['change']<0 %} <i data-feather="arrow-down" class="ms-1" style="color: red;"></i> {%endif%}
+            </span></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+
+      <div class="row mt-2">
+        <form action="/change" method="POST">
+          <div class="form-group">
+            <label for="exampleInputEmail1">New Unit</label>
+            <input
+              name="newUnit"
+              type="number"
+              class="form-control my-1"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Change</button>
+        </form>
+      </div>
+
+      <canvas id="myChart" width="1vw" height="1vw" style="max-height: 400px; max-width:400px;" class="mt-2"></canvas>
+
+    </div>
+
+    <script>
+      var nav_dates = {{nav_dates|safe}}
+      var nav_prices={{nav_prices|safe}}
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var chart = new Chart(ctx, {
+          // The type of chart we want to create
+          type: 'line',
+      
+          // The data for our dataset
+          data: {
+              labels: nav_dates,
+              datasets: [{
+                  label: 'NAV Price',
+                  backgroundColor: 'rgba(0, 255, 255, 0.3)',
+                  borderColor: 'rgb(0, 255, 255)',
+                  data: nav_prices
+              }]
+          },
+      
+          // Configuration options go here
+          options: {}
+      });
     </script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    <script>
+      feather.replace();
+    </script>
 
-        h3 {
-            padding: 10px;
-        }
-
-        tr:nth-child(even) {
-            background-color: white;
-        }
-
-        tr:nth-child(odd) {
-            background-color: gainsboro;
-        }
-
-        tr:nth-child(1) {
-            background-color: aqua;
-        }
-
-        td {
-            text-align: center;
-            padding: 10px 20px;
-        }
-    </style>
-</head>
-
-<body>
-    <h1>myCams Nav Values</h1>
-    <table>
-            <tr>
-                <td>Date</td>
-                <td>Price</td>
-                <td>Price Change</td>
-            </tr>
-        
-                <tr>
-                    <td>09-Dec-2020</td>
-                    <td>1610466.0</td>
-                    <td>8825.0</td>
-                </tr>
-                
-                <tr>
-                    <td>08-Dec-2020</td>
-                    <td>1601641.0</td>
-                    <td>131.0</td>
-                </tr>
-                
-                <tr>
-                    <td>07-Dec-2020</td>
-                    <td>1601510.0</td>
-                    <td>11408.0</td>
-                </tr>
-                
-                <tr>
-                    <td>04-Dec-2020</td>
-                    <td>1590102.0</td>
-                    <td>9722.0</td>
-                </tr>
-                
-                <tr>
-                    <td>03-Dec-2020</td>
-                    <td>1580380.0</td>
-                    <td>4984.0</td>
-                </tr>
-                
-                <tr>
-                    <td>02-Dec-2020</td>
-                    <td>1575396.0</td>
-                    <td>3204.0</td>
-                </tr>
-                
-                <tr>
-                    <td>01-Dec-2020</td>
-                    <td>1572192.0</td>
-                    <td>14062.0</td>
-                </tr>
-                
-                <tr>
-                    <td>27-Nov-2020</td>
-                    <td>1558130.0</td>
-                    <td>1315.0</td>
-                </tr>
-                
-                <tr>
-                    <td>26-Nov-2020</td>
-                    <td>1556815.0</td>
-                    <td>13979.0</td>
-                </tr>
-                
-                <tr>
-                    <td>25-Nov-2020</td>
-                    <td>1542836.0</td>
-                    <td>-15160.0</td>
-                </tr>
-                </table>
-</body>
-
+  </body>
 </html>
